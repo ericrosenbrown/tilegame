@@ -145,22 +145,19 @@ def boardSolver(board):
 
 def BFS(board):
     #TODO: FILL IN.
-    counter = 0
     return board
 
 def DFS(board):
     #TODO: FILL IN
-    counter = 0
     return board
 
 def Astar(board,heuristic):
     #TODO: FILL IN
-    counter = 0
     return board
 
 def heuristic(board):
-    #This function should use the board state to make an estimate of the cheapest path to the goal.
-    return board
+    #This function should use the board state to make an estimate of the path to the goal.
+    return 0
 
 def grapher(bfs,dfs,astar):
     #TODO: FILL IN
