@@ -1,12 +1,49 @@
 import random
 import copy
 from Tkinter import Tk, Canvas, Frame, Button, BOTH, TOP, BOTTOM
-from random import shuffle
 
 goalConfiguration = [[1,2,3],[4,5,6],[7,8,9]]#the goal state of the tile game. DO NOT TOUCH
-expandedStates = 0
+
+MARGIN = 30  #Size of buffer around the board
+SIDE = 60  #Side of each board square
+WIDTH = HEIGHT = MARGIN * 2 + SIDE * 3 #Width and Height of the whole board, i.e. the Tkinter Canvas
+
+class gridDisplay(Frame):
+    def __init__(self, parent, board):
+        """
+        Initialize an instance of the board within the TKinter hierarchy. Draws the game grid and fills it in
+        with the current state of the board as passed into it by the displayBoard method. Numbers part of the 
+        goal configuration are displayed in blue, the rest in black.
+        """
+        Frame.__init__(self, parent) 
+        self.parent = parent 
+        self.board = board
+        self.pack(fill=BOTH)
+        self.canvas = Canvas(self, width = WIDTH, height = HEIGHT)
+        self.canvas.pack(fill=BOTH, side=TOP)
+
+        for i in xrange(4):
+            color = "red" if (i == 0 or i == 3) else "gray" #Color the grid boundaries red.
+            x0 = x1 = MARGIN + i * SIDE
+            y0 = MARGIN
+            y1 = HEIGHT - MARGIN
+            self.canvas.create_line(x0, y0, x1, y1, fill=color)
+            self.canvas.create_line(y0, x0, y1, x1, fill=color)
+
+        for i in xrange(3):
+            for j in xrange(3):
+                answer = self.board[i][j] #Current state of board at i,j
+                if answer != 0:
+                    x = MARGIN + j * SIDE + SIDE / 2
+                    y = MARGIN + i * SIDE + SIDE / 2
+                    original = goalConfiguration[i][j] #Goal state of board at i, j
+                    color = "blue" if answer == original else "black" #Number printed in blue if part of goal state, black if not.
+                    self.canvas.create_text(x, y, text=answer, tags="numbers", fill=color)
 
 def generateBoard():
+    """
+    Parses the tFile for initial board configurations, chooses one, and assigns it to the board
+    """
     aboard = []
     nums = range(1,10);
     random.shuffle(nums)
@@ -24,23 +61,25 @@ def displayBoard(board):
     for x in range(3):
        print board[x]
     print "\n"
+    root = Tk()
+    gridDisplay(root, board)
+    root.geometry("%dx%d" % (WIDTH, HEIGHT + 40))
+    root.wm_title("Game Progress")
+    root.mainloop()
+
 
 def swapTiles(board,r1,c1,r2,c2):
     """
     Swaps tiles [r1][c1] with [r2][c2]. 0<=r1,r2,c1,c2<-=2
     """
     aboard = copy.deepcopy(board)
-    if ((r1+1 == r2 and c1 == c2) or (r1-1 == r2 and c1 == c2) or (c1+1 == c2 and r1 == r2) or (c1-1 == c2 and r1 == r2)): 
-        temp = aboard[r1][c1]
-        aboard[r1][c1] = aboard[r2][c2]
-        aboard[r2][c2] = temp
-        return aboard
-    else:
-        print "swapTiles was given non-adjacent tiles"
-        return board
+    
+    temp = aboard[r1][c1]
+    aboard[r1][c1] = aboard[r2][c2]
+    aboard[r2][c2] = temp
+    return aboard
 
-def expandableStates(board,reset):
-    """given a board state, returns a list of all valid states that could be followed from here by swapping tiles"""
+def expandableStates(board):
     expandable = []
     for i in range(9):
         for x in range(-1,2):
@@ -52,18 +91,14 @@ def expandableStates(board,reset):
                         temp = swapTiles(copy.deepcopy(board),indexX,indexY,x+indexX,y+indexY)
                         if not temp in expandable:
                             expandable.append(copy.deepcopy(temp))
-    if reset:
-        expandedStates = 0
-    else:
-        expandedStates = expandedStaes + len(expandable)
     return expandable
                     
 
 def isGoalState(board):
     return board == goalConfiguration
                     
-def boardSolver(tFile):
-    board = generateBoard(tFile)
+def boardSolver():
+    board = generateBoard()
 
     bfsBoard = BFS(board)
     dfsBoard = DFS(board)
@@ -120,18 +155,20 @@ def grapher(board,BFS,DFS,Astar,UCS,heuristic):
     #Run BFS,DFS,Astar and UCS on on the given board, and graph the number of nodes each expand.
     pass
 
+
 if __name__ == '__main__':
     #TODO
-    #You can use this function to experiment with your functions.
-    #when you handin, only run boardSolver("tilePuzzles.txt") in this function.
+    #when you handin, only run boardSolver("tilePuzzles.txt").
 
-    #boardSolver()
+    #boardSolver("tilePuzzles.txt")
     
+    tFile = "tilePuzzles.txt"
     originalBoard = generateBoard()
     displayBoard(originalBoard)
-    newBoard = swapTiles(originalBoard,0,0,1,0)
+    newBoard = swapTiles(originalBoard,0,0,1,1)
     for es in expandableStates(newBoard):
         displayBoard(es)
+    displayBoard(es)
     print isGoalState(newBoard)
 
             
