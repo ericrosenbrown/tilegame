@@ -7,7 +7,7 @@ goalConfiguration = [[1,2,3],[4,5,6],[7,8,9]]#the goal state of the tile game. D
 MARGIN = 30  #Size of buffer around the board
 SIDE = 60  #Side of each board square
 WIDTH = HEIGHT = MARGIN * 2 + SIDE * 3 #Width and Height of the whole board, i.e. the Tkinter Canvas
-
+globalExpandedNodes = 0 #Counts the number of expanded nondes per search algorithm. DO NOT TOUCH THIS VARIABLE. 
 class gridDisplay(Frame):
     def __init__(self, parent, board):
         """
@@ -80,6 +80,7 @@ def swapTiles(board,r1,c1,r2,c2):
     return aboard
 
 def expandableStates(board):
+    global globalExpandedNodes
     expandable = []
     for i in range(9):
         for x in range(-1,2):
@@ -91,19 +92,36 @@ def expandableStates(board):
                         temp = swapTiles(copy.deepcopy(board),indexX,indexY,x+indexX,y+indexY)
                         if not temp in expandable:
                             expandable.append(copy.deepcopy(temp))
+    globalExpandedNodes += len(expandable)
     return expandable
                     
 
 def isGoalState(board):
     return board == goalConfiguration
                     
-def boardSolver():
-    board = generateBoard()
-
+def boardSolver(board):
+    #DO NOT TOUCH THIS FUNCTION
+    #This function takes in a board, runs BFS, DFS and A* on board, and counts the number of expanded nodes, then graphs them.
+    global globalExpandedNodes
     bfsBoard = BFS(board)
+    
+    bfscount = globalExpandedNodes
+    print "BFS expanded " + str(bfscount) + " nodes."
+    globalExpandedNodes = 0
+    
     dfsBoard = DFS(board)
+
+    dfscount = globalExpandedNodes
+    print "DFS expanded " + str(dfscount) + " nodes."
+    globalExpandedNodes = 0
+    
     aBoard = Astar(board,heuristic)
-    ucsBoard = UCS(board)
+    
+    acount = globalExpandedNodes
+    dfscount = globalExpandedNodes
+    print "A* expanded " + str(acount) + " nodes."
+    
+    globalExpandedNodes = 0
 
     #BFS
     if isGoalState(bfsBoard):
@@ -123,52 +141,39 @@ def boardSolver():
     else:
         print ("[ ] A* has NOT found the correct configuration!")
 
-    #UCS board
-    if isGoalState(ucsBoard):
-        print ("[X] UCS has found the correct configuration!")
-    else:
-        print ("[ ] UCS has NOT found the correct configuration!")
+    grapher(bfscount,dfscount,acount)
 
 def BFS(board):
-    #TODO: FILL IN
+    #TODO: FILL IN.
+    counter = 0
     return board
 
 def DFS(board):
     #TODO: FILL IN
+    counter = 0
     return board
 
 def Astar(board,heuristic):
     #TODO: FILL IN
-    return board
-
-def UCS(board):
-    #TODO: FILL IN
+    counter = 0
     return board
 
 def heuristic(board):
-    #TODO: FILL IN
     #This function should use the board state to make an estimate of the cheapest path to the goal.
     return board
 
-def grapher(board,BFS,DFS,Astar,UCS,heuristic):
+def grapher(bfs,dfs,astar):
     #TODO: FILL IN
-    #Run BFS,DFS,Astar and UCS on on the given board, and graph the number of nodes each expand.
     pass
 
 
 if __name__ == '__main__':
-    #TODO
-    #when you handin, only run boardSolver("tilePuzzles.txt").
-
-    #boardSolver("tilePuzzles.txt")
+    #You can do whatever you want here, you'll only be graded on BFS, DFS, Astar and heuristic.
     
-    tFile = "tilePuzzles.txt"
     originalBoard = generateBoard()
-    displayBoard(originalBoard)
     newBoard = swapTiles(originalBoard,0,0,1,1)
-    for es in expandableStates(newBoard):
-        displayBoard(es)
-    displayBoard(es)
     print isGoalState(newBoard)
+    boardSolver(newBoard)
+    displayBoard(originalBoard)
 
             
