@@ -81,6 +81,7 @@ def swapTiles(board,r1,c1,r2,c2):
 
 def expandableStates(board):
     global globalExpandedNodes
+    globalExpandedNodes += 1
     expandable = []
     for i in range(9):
         for x in range(-1,2):
@@ -92,7 +93,6 @@ def expandableStates(board):
                         temp = swapTiles(copy.deepcopy(board),indexX,indexY,x+indexX,y+indexY)
                         if not temp in expandable:
                             expandable.append(copy.deepcopy(temp))
-    globalExpandedNodes += len(expandable)
     return expandable
                     
 
@@ -106,20 +106,20 @@ def boardSolver(board):
     bfsBoard = BFS(board)
     
     bfscount = globalExpandedNodes
-    print "BFS expanded " + str(bfscount) + " nodes."
+    print "BFS used expandNodes " + str(bfscount) + " times."
     globalExpandedNodes = 0
     
     dfsBoard = DFS(board)
 
     dfscount = globalExpandedNodes
-    print "DFS expanded " + str(dfscount) + " nodes."
+    print "DFS used expandNodes " + str(dfscount) + " times."
     globalExpandedNodes = 0
     
     aBoard = Astar(board,heuristic)
     
     acount = globalExpandedNodes
-    dfscount = globalExpandedNodes
-    print "A* expanded " + str(acount) + " nodes."
+    acount = globalExpandedNodes
+    print "A* used expandNodes " + str(acount) + " times."
     
     globalExpandedNodes = 0
 
