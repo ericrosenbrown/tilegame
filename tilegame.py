@@ -2,12 +2,12 @@ import random
 import copy
 from Tkinter import Tk, Canvas, Frame, Button, BOTH, TOP, BOTTOM
 
-goalConfiguration = [[1,2,3],[4,5,6],[7,8,9]]#the goal state of the tile game. DO NOT TOUCH
+goalConfiguration = [[1,2,3],[4,5,6],[7,8,9]]#the goal state of the tile game. 
 
 MARGIN = 30  #Size of buffer around the board
 SIDE = 60  #Side of each board square
 WIDTH = HEIGHT = MARGIN * 2 + SIDE * 3 #Width and Height of the whole board, i.e. the Tkinter Canvas
-globalExpandedNodes = 0 #Counts the number of expanded nondes per search algorithm. DO NOT TOUCH THIS VARIABLE. 
+globalExpandedNodes = 0 #Counts the number of expanded nondes per search algorithm.
 class gridDisplay(Frame):
     def __init__(self, parent, board):
         """
@@ -42,7 +42,7 @@ class gridDisplay(Frame):
 
 def generateBoard():
     """
-    Parses the tFile for initial board configurations, chooses one, and assigns it to the board
+    This function generates a random board, and returns it.
     """
     aboard = []
     nums = range(1,10);
@@ -80,6 +80,9 @@ def swapTiles(board,r1,c1,r2,c2):
     return aboard
 
 def expandableStates(board):
+    """
+    This function returns a list of all possible states that are possible from this board (ie: all possible board results of switching any two adjacent tiles)
+    """
     global globalExpandedNodes
     globalExpandedNodes += 1
     expandable = []
@@ -97,6 +100,9 @@ def expandableStates(board):
                     
 
 def isGoalState(board):
+    """
+    This function returns true/false on whether the board is in a goal configuration
+    """
     return board == goalConfiguration
                     
 def boardSolver(board):
@@ -140,29 +146,26 @@ def boardSolver(board):
         print ("[X] A* has found the correct configuration!")
     else:
         print ("[ ] A* has NOT found the correct configuration!")
-
-    grapher(bfscount,dfscount,acount)
-
+        
 def BFS(board):
     #TODO: FILL IN.
+    #Solve BFS on board and return the goal state
     return board
 
 def DFS(board):
     #TODO: FILL IN
+    #Solve DFS on board and return the goal state
     return board
 
-def Astar(board,heuristic):
+def Astar(board,heur):
     #TODO: FILL IN
+    #Implement A* using the hueristic huer and return the goal state
     return board
 
 def heuristic(board):
+    #TODO: FILL IN
     #This function should use the board state to make an estimate of the path to the goal.
     return 0
-
-def grapher(bfs,dfs,astar):
-    #TODO: FILL IN
-    pass
-
 
 if __name__ == '__main__':
     #You can do whatever you want here, you'll only be graded on BFS, DFS, Astar and heuristic.
